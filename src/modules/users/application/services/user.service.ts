@@ -1,15 +1,6 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
-import {
-  type CreateUserDto,
-  type UpdateUserDto,
-  type UserPayload,
-  UserResponseDto,
-} from "@users/application/dto/user.dto";
+import {ConflictException,Inject,Injectable,NotFoundException,} from "@nestjs/common";
+import {type CreateUserDto,type UpdateUserDto,type UserPayload, UserResponseDto,} from "@users/application/dto/user.dto";
+import type { PaginatedResult, PaginationParams } from "@shared/infra/hateoas";
 import { User } from "@users/domain/models/user.entity";
 import {
   USER_REPOSITORY,
@@ -70,9 +61,27 @@ export class UserService {
     return users.map((u) => UserResponseDto.from(u)!);
   }
 
-  async findById(id: string): Promise<UserResponseDto | null> {
+  async listPaginated({
+    page,
+    limit,
+  }: PaginationParams): Promise<PaginatedResult<UserResponseDto>> {
+    const users = await this.list();
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    return {
+      data: users.slice(start, end),
+      total: users.length,
+      page,
+      limit,
+    };
+  }
+
+  async findById(id: string): Promise<UserResponseDto> {
     const user = await this.userRepository.findById(id);
-    return UserResponseDto.from(user);
+    if (!user) throw new NotFoundException("User not found");
+
+    return UserResponseDto.from(user)!;
   }
 
   async validateCredentials(

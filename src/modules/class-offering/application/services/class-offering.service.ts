@@ -1,13 +1,9 @@
-import { ClassOfferingDto } from "@class-offering/application/dto/class-offering.dto";
+import {ClassOfferingDto,type CreateClassOfferingDto,} from "@class-offering/application/dto/class-offering.dto";
+import {ClassOffering,ClassOfferingStatus,} from "@class-offering/domain/models/class-offering.entity";
 import {
-  ClassOffering,
-  ClassOfferingStatus,
-} from "@class-offering/domain/models/class-offering.entity";
-import {
-  CLASS_OFFERING_REPOSITORY,
-  type ClassOfferingRepository,
-} from "@class-offering/domain/repositories/class-offering-repository.interface";
+  CLASS_OFFERING_REPOSITORY,type ClassOfferingRepository,} from "@class-offering/domain/repositories/class-offering-repository.interface";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import type { PaginatedResult, PaginationParams } from "@shared/infra/hateoas";
 
 @Injectable()
 export class ClassOfferingService {
@@ -16,18 +12,13 @@ export class ClassOfferingService {
     private readonly classOfferingRepository: ClassOfferingRepository,
   ) {}
 
-  async create(dto: {
-    subjectId: string;
-    teacherId: string;
-    startDate: Date;
-    endDate: Date;
-  }): Promise<void> {
+  async create(dto: CreateClassOfferingDto): Promise<void> {
     const classOffering = ClassOffering.restore({
       subjectId: dto.subjectId,
       teacherId: dto.teacherId,
       startDate: new Date(dto.startDate),
       endDate: new Date(dto.endDate),
-      status: ClassOfferingStatus.ACTIVE,
+      status: dto.status,
     });
 
     await this.classOfferingRepository.create(classOffering!);
@@ -38,9 +29,27 @@ export class ClassOfferingService {
     return response.map((row) => ClassOfferingDto.from(row)!);
   }
 
-  async findById(id: string): Promise<ClassOfferingDto | null> {
+  async listPaginated({
+    page,
+    limit,
+  }: PaginationParams): Promise<PaginatedResult<ClassOfferingDto>> {
+    const classOfferings = await this.list();
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    return {
+      data: classOfferings.slice(start, end),
+      total: classOfferings.length,
+      page,
+      limit,
+    };
+  }
+
+  async findById(id: string): Promise<ClassOfferingDto> {
     const response = await this.classOfferingRepository.findById(id);
-    return ClassOfferingDto.from(response);
+    if (!response) throw new NotFoundException("ClassOffering not found");
+
+    return ClassOfferingDto.from(response)!;
   }
 
   async changeStatus(id: string, status: ClassOfferingStatus): Promise<void> {

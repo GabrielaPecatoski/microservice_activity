@@ -3,12 +3,14 @@ import {
   classOfferingsSchema,
 } from "@class-offering/infra/schemas/class-offering.schema";
 import { Injectable, type OnModuleDestroy } from "@nestjs/common";
+import { usersSchema } from "@users/infra/schemas/user.schema";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
 const schema = {
   classOfferingsSchema,
   classOfferingStatusEnum,
+  usersSchema,
 };
 
 @Injectable()

@@ -27,10 +27,10 @@ DATABASE_URL=postgres://postgres:postgres@localhost:5432/school_control
 PORT=3001
 ```
 
-| Variável | Descrição |
-|---|---|
+| Variável       | Descrição                       |
+| -------------- | ------------------------------- |
 | `DATABASE_URL` | Connection string do PostgreSQL |
-| `PORT` | Porta em que a API vai subir |
+| `PORT`         | Porta em que a API vai subir    |
 
 ### 3. Criar e migrar o banco de dados
 
@@ -63,18 +63,18 @@ A API ficará disponível em `http://localhost:3001` (ou na porta configurada em
 
 ## Scripts disponíveis
 
-| Script | Descrição |
-|---|---|
-| `npm run start:dev` | Inicia em modo desenvolvimento com hot reload |
-| `npm run start` | Inicia sem hot reload |
-| `npm run start:prod` | Inicia o build de produção |
-| `npm run build` | Gera o build de produção em `dist/` |
-| `npm run db:generate` | Gera arquivos de migration a partir dos schemas |
-| `npm run db:migrate` | Aplica as migrations no banco |
-| `npm run db:push` | Sincroniza o schema diretamente no banco (sem migration) |
-| `npm run db:studio` | Abre o Drizzle Studio para inspecionar o banco visualmente |
-| `npm run lint` | Executa o linter (Biome) |
-| `npm run check` | Executa lint + formatação (Biome) |
+| Script                | Descrição                                                  |
+| --------------------- | ---------------------------------------------------------- |
+| `npm run start:dev`   | Inicia em modo desenvolvimento com hot reload              |
+| `npm run start`       | Inicia sem hot reload                                      |
+| `npm run start:prod`  | Inicia o build de produção                                 |
+| `npm run build`       | Gera o build de produção em `dist/`                        |
+| `npm run db:generate` | Gera arquivos de migration a partir dos schemas            |
+| `npm run db:migrate`  | Aplica as migrations no banco                              |
+| `npm run db:push`     | Sincroniza o schema diretamente no banco (sem migration)   |
+| `npm run db:studio`   | Abre o Drizzle Studio para inspecionar o banco visualmente |
+| `npm run lint`        | Executa o linter (Biome)                                   |
+| `npm run check`       | Executa lint + formatação (Biome)                          |
 
 ---
 
