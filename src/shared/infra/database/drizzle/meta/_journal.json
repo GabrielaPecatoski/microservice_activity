@@ -22,6 +22,13 @@
       "when": 1774990800000,
       "tag": "0002_admin_master",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1744682400000,
+      "tag": "0003_specialist_schema",
+      "breakpoints": true
     }
   ]
 }
