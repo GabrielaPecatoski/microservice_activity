@@ -4,9 +4,10 @@ import { ClassOfferingsController } from "@class-offering/infra/controllers/clas
 import { DrizzleClassOfferingRepository } from "@class-offering/infra/repositories/drizzle-class-offering.repository";
 import { Module } from "@nestjs/common";
 import { SharedModule } from "@shared/shared.module";
+import { MessagingModule } from "@messaging/messaging.module";
 
 @Module({
-  imports: [SharedModule],
+  imports: [SharedModule, MessagingModule],
   controllers: [ClassOfferingsController],
   providers: [
     ClassOfferingService,

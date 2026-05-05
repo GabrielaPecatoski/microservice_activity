@@ -1,8 +1,12 @@
-import {ClassOfferingDto,type CreateClassOfferingDto,} from "@class-offering/application/dto/class-offering.dto";
-import {ClassOffering,ClassOfferingStatus,} from "@class-offering/domain/models/class-offering.entity";
+import { ClassOfferingDto, type CreateClassOfferingDto } from "@class-offering/application/dto/class-offering.dto";
+import { ClassOffering, ClassOfferingStatus } from "@class-offering/domain/models/class-offering.entity";
 import {
-  CLASS_OFFERING_REPOSITORY,type ClassOfferingRepository,} from "@class-offering/domain/repositories/class-offering-repository.interface";
+  CLASS_OFFERING_REPOSITORY,
+  type ClassOfferingRepository,
+} from "@class-offering/domain/repositories/class-offering-repository.interface";
+import { ClassOfferingPublisherService } from "@messaging/application/services/class-offering-publisher.service";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { randomUUID } from "node:crypto";
 import type { PaginatedResult, PaginationParams } from "@shared/infra/hateoas";
 
 @Injectable()
@@ -10,10 +14,12 @@ export class ClassOfferingService {
   constructor(
     @Inject(CLASS_OFFERING_REPOSITORY)
     private readonly classOfferingRepository: ClassOfferingRepository,
+    private readonly publisherService: ClassOfferingPublisherService,
   ) {}
 
   async create(dto: CreateClassOfferingDto): Promise<void> {
     const classOffering = ClassOffering.restore({
+      id: randomUUID(),
       subjectId: dto.subjectId,
       teacherId: dto.teacherId,
       startDate: new Date(dto.startDate),
@@ -22,6 +28,7 @@ export class ClassOfferingService {
     });
 
     await this.classOfferingRepository.create(classOffering!);
+    this.publisherService.publishCreated(classOffering!);
   }
 
   async list(): Promise<ClassOfferingDto[]> {
@@ -60,5 +67,11 @@ export class ClassOfferingService {
     }
 
     await this.classOfferingRepository.updateStatus(id, status);
+
+    if (status === ClassOfferingStatus.INACTIVE) {
+      this.publisherService.publishCanceled(classOffering.withStatus(status));
+    } else {
+      this.publisherService.publishUpdated(classOffering.withStatus(status));
+    }
   }
 }

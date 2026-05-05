@@ -14,6 +14,7 @@ export class DrizzleClassOfferingRepository implements ClassOfferingRepository {
 
   async create(classOffering: ClassOffering): Promise<void> {
     await this.drizzleService.db.insert(classOfferingsSchema).values({
+      id: classOffering.id,
       subjectId: classOffering.subjectId,
       teacherId: classOffering.teacherId,
       startDate: classOffering.startDate,

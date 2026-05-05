@@ -25,7 +25,8 @@
       "@shared/*": ["src/shared/*"],
       "@class-offering/*": ["src/modules/class-offering/*"],
       "@users/*": ["src/modules/users/*"],
-      "@auth/*": ["src/modules/auth/*"]
+      "@auth/*": ["src/modules/auth/*"],
+      "@messaging/*": ["src/modules/messaging/*"]
     }
   }
 }
